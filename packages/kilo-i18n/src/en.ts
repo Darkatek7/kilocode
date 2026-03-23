@@ -97,4 +97,20 @@ export const dict = {
   "profile.links.billing": "Billing",
   "profile.links.apiKeys": "API Keys",
   "profile.links.team": "Team",
+
+  // Device Auth
+  "deviceAuth.toast.urlCopied": "URL copied to clipboard",
+  "deviceAuth.toast.codeCopied": "Code copied to clipboard",
+  "deviceAuth.status.initiating": "Starting login...",
+  "deviceAuth.title": "Sign in to Kilo Code",
+  "deviceAuth.step1": "Step 1: Open this URL",
+  "deviceAuth.action.copyUrl": "Copy URL",
+  "deviceAuth.action.openBrowser": "Open Browser",
+  "deviceAuth.step2": "Step 2: Enter this code",
+  "deviceAuth.action.clickToCopy": "Click to copy",
+  "deviceAuth.status.waiting": "Waiting for authorization...",
+  "deviceAuth.status.success": "Login successful!",
+  "deviceAuth.status.failed": "Login failed",
+  "deviceAuth.status.cancelled": "Login cancelled",
+  "deviceAuth.action.tryAgain": "Try Again",
 }

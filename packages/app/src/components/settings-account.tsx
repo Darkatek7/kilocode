@@ -2,6 +2,7 @@ import { type Component, For, Show, createMemo, createResource } from "solid-js"
 import { createStore } from "solid-js/store"
 import { Button } from "@opencode-ai/ui/button"
 import { Card } from "@opencode-ai/ui/card"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { Icon } from "@opencode-ai/ui/icon"
 import { Select } from "@opencode-ai/ui/select"
 import { Spinner } from "@opencode-ai/ui/spinner"
@@ -11,6 +12,7 @@ import { DateTime } from "luxon"
 import { useLanguage } from "@/context/language"
 import { useGlobalSDK } from "@/context/global-sdk"
 import { usePlatform } from "@/context/platform"
+import { DialogDeviceAuth } from "./dialog-device-auth"
 
 type OrgOption = {
   value: string
@@ -55,6 +57,7 @@ export const SettingsAccount: Component = () => {
   const globalSDK = useGlobalSDK()
   const platform = usePlatform()
   const language = useLanguage()
+  const dialog = useDialog()
 
   const [profile, { refetch: refetchProfile }] = createResource(async () => {
     try {
@@ -167,29 +170,17 @@ export const SettingsAccount: Component = () => {
     }
   }
 
-  const handleLogin = async () => {
-    try {
-      const result = await globalSDK.client.provider.oauth.authorize(
-        { providerID: "kilo", method: 0 },
-        { throwOnError: true },
-      )
-      const auth = result.data
-      if (!auth?.url) return
-      platform.openLink(auth.url)
-      const callbackResult = await globalSDK.client.provider.oauth
-        .callback({ providerID: "kilo", method: 0 })
-        .then((value) => (value.error ? { ok: false as const, error: value.error } : { ok: true as const }))
-        .catch((error) => ({ ok: false as const, error }))
-      if (!callbackResult.ok) {
-        showToast({ variant: "error", title: language.t("common.requestFailed") })
-        return
-      }
-      await globalSDK.client.global.dispose()
-      await refetchProfile()
-      await refetchNotifications()
-    } catch {
-      showToast({ variant: "error", title: language.t("common.requestFailed") })
-    }
+  const handleLogin = () => {
+    dialog.show(() => (
+      <DialogDeviceAuth
+        onSuccess={async () => {
+          dialog.close()
+          await refetchProfile()
+          await refetchNotifications()
+        }}
+        onCancel={() => dialog.close()}
+      />
+    ))
   }
 
   const handleLogout = async () => {
