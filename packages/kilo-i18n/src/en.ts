@@ -92,4 +92,9 @@ export const dict = {
   "profile.cloudSessions.import": "Import",
   "profile.cloudSessions.loadMore": "Load more",
   "profile.cloudSessions.imported": "Session imported successfully",
+  "profile.links.title": "Quick Links",
+  "profile.links.usage": "Usage",
+  "profile.links.billing": "Billing",
+  "profile.links.apiKeys": "API Keys",
+  "profile.links.team": "Team",
 }

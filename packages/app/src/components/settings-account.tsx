@@ -2,6 +2,7 @@ import { type Component, For, Show, createMemo, createResource } from "solid-js"
 import { createStore } from "solid-js/store"
 import { Button } from "@opencode-ai/ui/button"
 import { Card } from "@opencode-ai/ui/card"
+import { Icon } from "@opencode-ai/ui/icon"
 import { Select } from "@opencode-ai/ui/select"
 import { Spinner } from "@opencode-ai/ui/spinner"
 import { Tooltip } from "@opencode-ai/ui/tooltip"
@@ -387,6 +388,46 @@ export const SettingsAccount: Component = () => {
                           </Show>
                         </Show>
                       </Show>
+                    </div>
+                  </Card>
+
+                  <Card>
+                    <div class="flex flex-col gap-3">
+                      <p class="text-11-uppercase tracking-wide text-text-base">{language.t("profile.links.title")}</p>
+                      <div class="grid grid-cols-2 gap-2">
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          onClick={() => platform.openLink("https://app.kilo.ai/usage")}
+                        >
+                          <Icon name="link" />
+                          {language.t("profile.links.usage")}
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          onClick={() => platform.openLink("https://app.kilo.ai/billing")}
+                        >
+                          <Icon name="link" />
+                          {language.t("profile.links.billing")}
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          onClick={() => platform.openLink("https://app.kilo.ai/api-keys")}
+                        >
+                          <Icon name="link" />
+                          {language.t("profile.links.apiKeys")}
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          size="small"
+                          onClick={() => platform.openLink("https://app.kilo.ai/team")}
+                        >
+                          <Icon name="link" />
+                          {language.t("profile.links.team")}
+                        </Button>
+                      </div>
                     </div>
                   </Card>
 
