@@ -85,4 +85,11 @@ export const dict = {
   "profile.error.title": "Unable to load profile",
   "profile.error.description": "Could not load your Kilo profile. Check your connection and try again.",
   "profile.error.retry": "Try again",
+  "profile.cloudSessions.title": "Cloud Sessions",
+  "profile.cloudSessions.empty": "No cloud sessions yet",
+  "profile.cloudSessions.load": "Load sessions",
+  "profile.cloudSessions.untitled": "Untitled",
+  "profile.cloudSessions.import": "Import",
+  "profile.cloudSessions.loadMore": "Load more",
+  "profile.cloudSessions.imported": "Session imported successfully",
 }

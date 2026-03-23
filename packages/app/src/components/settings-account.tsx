@@ -1,10 +1,12 @@
 import { type Component, For, Show, createMemo, createResource } from "solid-js"
+import { createStore } from "solid-js/store"
 import { Button } from "@opencode-ai/ui/button"
 import { Card } from "@opencode-ai/ui/card"
 import { Select } from "@opencode-ai/ui/select"
 import { Spinner } from "@opencode-ai/ui/spinner"
 import { Tooltip } from "@opencode-ai/ui/tooltip"
 import { showToast } from "@opencode-ai/ui/toast"
+import { DateTime } from "luxon"
 import { useLanguage } from "@/context/language"
 import { useGlobalSDK } from "@/context/global-sdk"
 import { usePlatform } from "@/context/platform"
@@ -26,10 +28,26 @@ type KiloNotification = {
   showIn?: string[]
 }
 
+type CloudSession = {
+  session_id: string
+  title: string | null
+  created_at: string
+  updated_at: string
+  version: number
+}
+
 const PERSONAL = "personal"
 
 const formatBalance = (amount: number): string => {
   return `$${amount.toFixed(2)}`
+}
+
+const formatRelative = (dateStr: string): string => {
+  try {
+    return DateTime.fromISO(dateStr).toRelative() ?? dateStr
+  } catch {
+    return dateStr
+  }
 }
 
 export const SettingsAccount: Component = () => {
@@ -68,6 +86,51 @@ export const SettingsAccount: Component = () => {
     },
     { initialValue: [] as KiloNotification[] },
   )
+
+  const [cloudStore, setCloudStore] = createStore({
+    sessions: [] as CloudSession[],
+    nextCursor: null as string | null,
+    loading: false,
+    loadingMore: false,
+    importingId: null as string | null,
+  })
+
+  const fetchCloudSessions = async (cursor?: string) => {
+    if (cursor === undefined) setCloudStore("loading", true)
+    else setCloudStore("loadingMore", true)
+    try {
+      const result = await globalSDK.client.kilo.cloudSessions({ cursor, limit: 20 })
+      if (result.error) return
+      const data = result.data
+      if (!data) return
+      if (cursor) {
+        setCloudStore("sessions", (prev) => [...prev, ...(data.cliSessions ?? [])])
+      } else {
+        setCloudStore("sessions", data.cliSessions ?? [])
+      }
+      setCloudStore("nextCursor", data.nextCursor ?? null)
+    } finally {
+      setCloudStore("loading", false)
+      setCloudStore("loadingMore", false)
+    }
+  }
+
+  const importCloudSession = async (sessionId: string) => {
+    setCloudStore("importingId", sessionId)
+    try {
+      const result = await globalSDK.client.kilo.cloud.session.import({ sessionId })
+      if (result.error) throw result.error
+      showToast({ variant: "success", title: language.t("profile.cloudSessions.imported") })
+    } catch {
+      showToast({ variant: "error", title: language.t("common.requestFailed") })
+    } finally {
+      setCloudStore("importingId", null)
+    }
+  }
+
+  const loadMoreCloudSessions = () => {
+    if (cloudStore.nextCursor) fetchCloudSessions(cloudStore.nextCursor)
+  }
 
   const handleNotificationAction = (notification: KiloNotification) => {
     if (notification.action?.actionURL) {
@@ -140,6 +203,7 @@ export const SettingsAccount: Component = () => {
 
   const handleRefresh = async () => {
     await Promise.all([refetchProfile(), refetchNotifications()])
+    await fetchCloudSessions()
   }
 
   const handleDashboard = () => {
@@ -245,6 +309,86 @@ export const SettingsAccount: Component = () => {
                       </div>
                     </Card>
                   </Show>
+
+                  <Card>
+                    <div class="flex flex-col gap-3">
+                      <div class="flex items-center justify-between">
+                        <p class="text-11-uppercase tracking-wide text-text-base">
+                          {language.t("profile.cloudSessions.title")}
+                        </p>
+                        <Show when={!cloudStore.loading && cloudStore.sessions.length > 0}>
+                          <Button variant="ghost" size="small" onClick={fetchCloudSessions.bind(null, undefined)}>
+                            ↻
+                          </Button>
+                        </Show>
+                      </div>
+                      <Show
+                        when={!cloudStore.loading}
+                        fallback={
+                          <div class="flex items-center justify-center p-4">
+                            <Spinner />
+                          </div>
+                        }
+                      >
+                        <Show
+                          when={cloudStore.sessions.length > 0}
+                          fallback={
+                            <div class="flex flex-col gap-3">
+                              <p class="text-13-regular text-text-base">{language.t("profile.cloudSessions.empty")}</p>
+                              <Button
+                                variant="secondary"
+                                size="small"
+                                onClick={fetchCloudSessions.bind(null, undefined)}
+                              >
+                                {language.t("profile.cloudSessions.load")}
+                              </Button>
+                            </div>
+                          }
+                        >
+                          <div class="flex flex-col gap-1">
+                            <For each={cloudStore.sessions}>
+                              {(session) => (
+                                <div class="flex items-center justify-between gap-3 p-2 rounded bg-bg-subtle">
+                                  <div class="flex flex-col gap-0.5 flex-1 min-w-0">
+                                    <p class="text-13-medium text-text-strong truncate">
+                                      {session.title ?? language.t("profile.cloudSessions.untitled")}
+                                    </p>
+                                    <p class="text-11-regular text-text-base">{formatRelative(session.updated_at)}</p>
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="small"
+                                    onClick={importCloudSession.bind(null, session.session_id)}
+                                    disabled={cloudStore.importingId !== null}
+                                  >
+                                    {cloudStore.importingId === session.session_id ? (
+                                      <Spinner class="size-3.5" />
+                                    ) : (
+                                      language.t("profile.cloudSessions.import")
+                                    )}
+                                  </Button>
+                                </div>
+                              )}
+                            </For>
+                          </div>
+                          <Show when={cloudStore.nextCursor}>
+                            <Button
+                              variant="secondary"
+                              size="small"
+                              onClick={loadMoreCloudSessions}
+                              disabled={cloudStore.loadingMore}
+                            >
+                              {cloudStore.loadingMore ? (
+                                <Spinner class="size-3.5" />
+                              ) : (
+                                language.t("profile.cloudSessions.loadMore")
+                              )}
+                            </Button>
+                          </Show>
+                        </Show>
+                      </Show>
+                    </div>
+                  </Card>
 
                   <div class="flex gap-3">
                     <Button variant="secondary" onClick={handleDashboard} style={{ flex: "1" }}>
