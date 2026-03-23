@@ -1,5 +1,5 @@
 import { TextField } from "@opencode-ai/ui/text-field"
-import { Logo } from "@opencode-ai/ui/logo"
+import { Logo } from "@kilocode/kilo-ui/logo"
 import { Button } from "@opencode-ai/ui/button"
 import { Component, Show } from "solid-js"
 import { createStore } from "solid-js/store"

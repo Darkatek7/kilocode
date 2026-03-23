@@ -1,6 +1,6 @@
 import { createMemo, For, Match, Switch } from "solid-js"
 import { Button } from "@opencode-ai/ui/button"
-import { Logo } from "@opencode-ai/ui/logo"
+import { Logo } from "@kilocode/kilo-ui/logo"
 import { useLayout } from "@/context/layout"
 import { useNavigate } from "@solidjs/router"
 import { base64Encode } from "@opencode-ai/util/encode"
