@@ -229,18 +229,21 @@ export const SettingsAccount: Component = () => {
               {(data) => (
                 <div class="flex flex-col gap-4">
                   <Card>
-                    <div class="flex flex-col gap-1">
-                      <p class="text-14-medium text-text-strong">{data().profile.name || data().profile.email}</p>
-                      <p class="text-12-regular text-text-base">{data().profile.email}</p>
+                    <div class="flex flex-col gap-3">
+                      <p class="text-11-uppercase tracking-wide text-text-base">
+                        {language.t("profile.account.label")}
+                      </p>
+                      <div class="flex flex-col gap-1">
+                        <p class="text-14-medium text-text-strong">{data().profile.name || data().profile.email}</p>
+                        <p class="text-12-regular text-text-base">{data().profile.email}</p>
+                      </div>
                     </div>
                   </Card>
 
                   <Show when={orgOptions().length > 0}>
                     <Card>
                       <div class="flex flex-col gap-3">
-                        <p class="text-11-uppercase tracking-wide text-text-base">
-                          {language.t("profile.account.label")}
-                        </p>
+                        <p class="text-11-uppercase tracking-wide text-text-base">{language.t("profile.org.label")}</p>
                         <Select
                           options={orgOptions()}
                           current={currentOrg()}
@@ -282,7 +285,7 @@ export const SettingsAccount: Component = () => {
                         <div class="flex flex-col gap-2">
                           <For each={notifications().slice(0, 5)}>
                             {(notification) => (
-                              <div class="flex items-start gap-3 p-2 rounded bg-bg-subtle">
+                              <div class="flex items-start gap-3 p-2 rounded bg-bg-subtle hover:bg-bg-base transition-colors">
                                 <div class="flex flex-col gap-0.5 flex-1 min-w-0">
                                   <p class="text-13-medium text-text-strong truncate">{notification.title}</p>
                                   <p class="text-12-regular text-text-base line-clamp-2">{notification.message}</p>
@@ -327,8 +330,9 @@ export const SettingsAccount: Component = () => {
                         <Show
                           when={cloudStore.sessions.length > 0}
                           fallback={
-                            <div class="flex flex-col gap-3">
-                              <p class="text-13-regular text-text-base">{language.t("profile.cloudSessions.empty")}</p>
+                            <div class="flex flex-col gap-3 items-center py-4">
+                              <Icon name="cloud-upload" class="text-text-weak" />
+                              <p class="text-13-regular text-text-weak">{language.t("profile.cloudSessions.empty")}</p>
                               <Button
                                 variant="secondary"
                                 size="small"
@@ -342,7 +346,7 @@ export const SettingsAccount: Component = () => {
                           <div class="flex flex-col gap-1">
                             <For each={cloudStore.sessions}>
                               {(session) => (
-                                <div class="flex items-center justify-between gap-3 p-2 rounded bg-bg-subtle">
+                                <div class="flex items-center justify-between gap-3 p-2 rounded bg-bg-subtle hover:bg-bg-base transition-colors">
                                   <div class="flex flex-col gap-0.5 flex-1 min-w-0">
                                     <p class="text-13-medium text-text-strong truncate">
                                       {session.title ?? language.t("profile.cloudSessions.untitled")}
@@ -393,7 +397,7 @@ export const SettingsAccount: Component = () => {
                           size="small"
                           onClick={() => platform.openLink("https://app.kilo.ai/usage")}
                         >
-                          <Icon name="link" />
+                          <Icon name="square-arrow-top-right" />
                           {language.t("profile.links.usage")}
                         </Button>
                         <Button
@@ -401,7 +405,7 @@ export const SettingsAccount: Component = () => {
                           size="small"
                           onClick={() => platform.openLink("https://app.kilo.ai/billing")}
                         >
-                          <Icon name="link" />
+                          <Icon name="square-arrow-top-right" />
                           {language.t("profile.links.billing")}
                         </Button>
                         <Button
@@ -409,7 +413,7 @@ export const SettingsAccount: Component = () => {
                           size="small"
                           onClick={() => platform.openLink("https://app.kilo.ai/api-keys")}
                         >
-                          <Icon name="link" />
+                          <Icon name="square-arrow-top-right" />
                           {language.t("profile.links.apiKeys")}
                         </Button>
                         <Button
@@ -417,7 +421,7 @@ export const SettingsAccount: Component = () => {
                           size="small"
                           onClick={() => platform.openLink("https://app.kilo.ai/team")}
                         >
-                          <Icon name="link" />
+                          <Icon name="square-arrow-top-right" />
                           {language.t("profile.links.team")}
                         </Button>
                       </div>
