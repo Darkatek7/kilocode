@@ -238,7 +238,9 @@ export const SettingsAccount: Component = () => {
                   <Show when={orgOptions().length > 0}>
                     <Card>
                       <div class="flex flex-col gap-3">
-                        <p class="text-11-uppercase tracking-wide text-text-base">Account</p>
+                        <p class="text-11-uppercase tracking-wide text-text-base">
+                          {language.t("profile.account.label")}
+                        </p>
                         <Select
                           options={orgOptions()}
                           current={currentOrg()}

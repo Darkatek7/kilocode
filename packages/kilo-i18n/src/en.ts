@@ -81,6 +81,7 @@ export const dict = {
   "profile.action.dashboard": "Dashboard",
   "profile.action.logout": "Log Out",
   "profile.personalAccount": "Personal",
+  "profile.account.label": "Account",
   "profile.notifications.title": "Notifications",
   "profile.error.title": "Unable to load profile",
   "profile.error.description": "Could not load your Kilo profile. Check your connection and try again.",
